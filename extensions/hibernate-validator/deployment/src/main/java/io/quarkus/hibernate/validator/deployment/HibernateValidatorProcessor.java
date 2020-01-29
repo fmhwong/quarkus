@@ -21,6 +21,7 @@ import javax.validation.MessageInterpolator;
 import javax.validation.ParameterNameProvider;
 import javax.validation.TraversableResolver;
 import javax.validation.Valid;
+import javax.validation.ValidatorFactory;
 import javax.validation.executable.ValidateOnExecution;
 import javax.validation.valueextraction.ValueExtractor;
 
@@ -55,10 +56,12 @@ import io.quarkus.deployment.builditem.nativeimage.ReflectiveMethodBuildItem;
 import io.quarkus.deployment.logging.LogCleanupFilterBuildItem;
 import io.quarkus.deployment.recording.RecorderContext;
 import io.quarkus.hibernate.validator.runtime.HibernateValidatorRecorder;
+import io.quarkus.hibernate.validator.runtime.ValidatorHolder;
 import io.quarkus.hibernate.validator.runtime.ValidatorProvider;
 import io.quarkus.hibernate.validator.runtime.interceptor.MethodValidationInterceptor;
 import io.quarkus.resteasy.server.common.spi.AdditionalJaxRsResourceMethodAnnotationsBuildItem;
 import io.quarkus.runtime.LocalesBuildTimeConfig;
+import io.quarkus.runtime.RuntimeValue;
 
 class HibernateValidatorProcessor {
 
@@ -231,6 +234,12 @@ class HibernateValidatorProcessor {
                 .addResourceBundle(AbstractMessageInterpolator.USER_VALIDATION_MESSAGES)
                 .addResourceBundle(AbstractMessageInterpolator.CONTRIBUTOR_VALIDATION_MESSAGES)
                 .build();
+    }
+
+    @BuildStep
+    public ValidatorFactoryBuildItem createValidatorFactory(
+            List<BeanContainerListenerBuildItem> beanContainerListenerBuildItems) {
+        return new ValidatorFactoryBuildItem(new RuntimeValue<ValidatorFactory>(ValidatorHolder.getValidatorFactory()));
     }
 
     private static void contributeBuiltinConstraints(Set<DotName> constraintCollector) {

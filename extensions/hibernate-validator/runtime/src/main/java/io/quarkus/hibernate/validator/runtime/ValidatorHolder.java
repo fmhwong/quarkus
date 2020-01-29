@@ -14,7 +14,7 @@ public class ValidatorHolder {
         ValidatorHolder.validator = validatorFactory.getValidator();
     }
 
-    static ValidatorFactory getValidatorFactory() {
+    public static ValidatorFactory getValidatorFactory() {
         return validatorFactory;
     }
 
